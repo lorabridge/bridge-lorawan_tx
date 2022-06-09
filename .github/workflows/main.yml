@@ -37,7 +37,7 @@ jobs:
       - name: Build and push lorawan_tx
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: lorawan_tx
+          context: .
           push: true
           platforms: linux/arm/v7
           tags: |
