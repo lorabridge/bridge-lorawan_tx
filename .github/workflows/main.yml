@@ -42,3 +42,5 @@ jobs:
           platforms: linux/arm/v7
           tags: |
             ${{ env.REGISTRY }}/lorabridge/lorawan_tx:latest
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/lorabridge/lorawan_tx:latest
+          cache-to: type=inline
