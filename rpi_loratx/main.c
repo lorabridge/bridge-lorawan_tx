@@ -50,6 +50,8 @@ static u1_t DEVKEY[16];
 redisContext *c;
 redisReply *reply;
 
+uint8_t ongoing_tx;
+
 //////////////////////////////////////////////////
 // INITIALIZE REDIS CLIENT
 //////////////////////////////////////////////////
@@ -147,6 +149,9 @@ static void reportfunc (osjob_t* j) {
 
     redisReply *tx_string = fetch_redis_string();
 
+    if(ongoing_tx == 1)
+	return;
+
     if(tx_string != NULL) {
       printf("\nScheduling a lorabridge_data string...\n");//:%s\n", tx_string->str);
 
@@ -158,6 +163,8 @@ static void reportfunc (osjob_t* j) {
 
       LMIC_setTxData2(1, LMIC.frame, tx_string->len, 0); // (port 1, 2 bytes, unconfirmed)
      //LMIC_setTxData2(1, LMIC.frame, 63, 0);
+
+      ongoing_tx = 1;
 
       printf("String sent to LoRaWAN TX\n");
 
@@ -240,7 +247,7 @@ int main () {
   //  printf("%d\n",alen);
   //  printf("%d\n",blen);
 
-
+    ongoing_tx = 0;
     // printf(DEVEUI);
     // printf("%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",DEVEUI[0],DEVEUI[1],DEVEUI[2],DEVEUI[3],DEVEUI[4],DEVEUI[5],DEVEUI[6],DEVEUI[7]);
     // printf("\n");
@@ -272,12 +279,17 @@ void onEvent (ev_t ev) {
       case EV_JOINED:
           debug_val("netid = ", LMIC.netid);
 
+	  ongoing_tx = 0;
+
           reportfunc(&reportjob);
 
           break;
 
       // scheduled data sent (optionally data received)
       case EV_TXCOMPLETE:
+
+	  ongoing_tx = 0;
+
           if(LMIC.dataLen) { // data received in rx slot after tx
               debug_buf(LMIC.frame+LMIC.dataBeg, LMIC.dataLen);
           }
