@@ -149,10 +149,7 @@ static void reportfunc (osjob_t* j) {
 
     redisReply *tx_string = fetch_redis_string();
 
-    if(ongoing_tx == 1)
-	return;
-
-    if(tx_string != NULL) {
+    if(tx_string != NULL && ongoing_tx == 0) {
       printf("\nScheduling a lorabridge_data string...\n");//:%s\n", tx_string->str);
 
       //memset(LMIC.frame,0,strlen(LMIC.frame));

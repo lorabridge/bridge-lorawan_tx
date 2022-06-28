@@ -653,6 +653,14 @@ static void updateTx (ostime_t txbeg) {
     band->avail = txbeg + airtime * band->txcap;
     if( LMIC.globalDutyRate != 0 )
         LMIC.globalDutyAvail = txbeg + (airtime<<LMIC.globalDutyRate);
+
+    #ifdef DEBUG_LMIC
+	printf("LMIC: Updating TX parameters\n");
+	printf("LMIC: Frequency: %d\n",freq);
+	printf("LMIC: TX Power: %d\n",LMIC.txpow);
+	printf("LMIC: Airtime: %d\n", airtime);
+	printf("LMIC: globalDutyAvail: %d\n", LMIC.globalDutyAvail);
+    #endif
 }
 
 static ostime_t nextTx (ostime_t now) {
@@ -1412,10 +1420,19 @@ static bit_t processJoinAccept (void) {
         goto badframe;
 #endif
         dlen = OFF_CFLIST;
+
+	#ifdef DEBUG_LMIC
+		printf("LMIC: Join accept contains following frequency settings:\n");
+	#endif
+
         for( u1_t chidx=3; chidx<8; chidx++, dlen+=3 ) {
             u4_t freq = convFreq(&LMIC.frame[dlen]);
-            if( freq )
+            if( freq ) {
                 LMIC_setupChannel(chidx, freq, 0, -1);
+		#ifdef DEBUG_LMIC
+			printf("LMIC: Frequency: %d\n", freq);
+		#endif
+	    }
         }
     }
 
