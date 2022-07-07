@@ -208,6 +208,16 @@ int HexStringToBytes(const char *hexStr,
   return 0;
 }
 
+void ReverseArray(u1_t arr[], int size)
+{
+    for (int i = 0; i < size/2; i++)
+    {
+        u1_t temp = arr[i];
+        arr[i] = arr[size - 1 - i];
+        arr[size - 1 - i] = temp;
+    }
+}
+
 // application entry point
 int main () {
     osjob_t initjob;
@@ -239,8 +249,11 @@ int main () {
 
    unsigned int alen;
    unsigned int blen;
-   HexStringToBytes(getenv("DEV_EUI"),DEVEUI,&alen);
-   HexStringToBytes(getenv("DEV_KEY"),DEVKEY,&blen);
+   HexStringToBytes(getenv("DEV_EUI"), DEVEUI, &alen);
+   HexStringToBytes(getenv("DEV_KEY"), DEVKEY, &blen);
+   // why is the endianness of DEVEUI and DEVKEY different...? see comment of os_getDevEui and os_getDevKey above
+   ReverseArray(DEVEUI, 8);
+  //  ReverseArray(DEVKEY, 16);
   //  printf("%d\n",alen);
   //  printf("%d\n",blen);
 
@@ -248,6 +261,11 @@ int main () {
     // printf(DEVEUI);
     // printf("%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",DEVEUI[0],DEVEUI[1],DEVEUI[2],DEVEUI[3],DEVEUI[4],DEVEUI[5],DEVEUI[6],DEVEUI[7]);
     // printf("\n");
+    // for(int i=0; i<16; i++){
+    // 	  printf("%02x:", DEVKEY[i]);
+    // }
+    // printf("\n");
+    // fflush(stdout);
     // initialize runtime env
     os_init();
     // initialize redis
