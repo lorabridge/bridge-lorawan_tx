@@ -1,4 +1,4 @@
-FROM alpine:3.15 as build
+FROM alpine:3 as build
 
 WORKDIR /home/lora
 # RUN echo "@community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
@@ -13,8 +13,9 @@ RUN apk update
 # 000000001 HAL: Failed. Aborting.
 
 # alpine edge install wiringpi 2.61-r0 which works with --privileged
-RUN apk add --no-cache build-base hiredis-dev 
-RUN apk add --no-cache wiringpi-dev --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
+RUN apk add --no-cache build-base hiredis-dev
+RUN apk add --no-cache wiringpi-dev
+# --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
 
 COPY . .
 
@@ -23,12 +24,13 @@ WORKDIR /home/lora/rpi_loratx
 
 RUN make
 
-FROM alpine:3.15
+FROM alpine:3
 
 # RUN echo "@community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
 RUN apk update
 RUN apk add --no-cache hiredis
-RUN apk add --no-cache wiringpi --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
+RUN apk add --no-cache wiringpi
+# --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
 #--repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
 WORKDIR /home/lora
 COPY --from=build /home/lora/rpi_loratx/build/rpi_loratx.out /home/lora/rpi_loratx.out
