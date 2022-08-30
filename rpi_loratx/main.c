@@ -47,6 +47,11 @@ static u1_t DEVEUI[8];
 static u1_t DEVKEY[16];
 
 
+static const u1_t lorawan_tx_uninitialized[] = "uninitialized";
+static const u1_t lorawan_tx_joining[] = "joining";
+static const u1_t lorawan_tx_joined[] = "joined";
+
+
 redisContext *c;
 redisReply *reply;
 
@@ -77,6 +82,24 @@ void init_redis() {
           printf("Connection error: can't allocate redis context\n");
       }
       exit(1);
+  }
+
+}
+
+//////////////////////////////////////////////////
+// UI STATUS UPDATE FUNCTIONS
+//////////////////////////////////////////////////
+
+void update_ui_status(const u1_t *new_status) {
+
+  if(c != NULL) {
+
+      reply = redisCommand(c, "SET txstatus %s", new_status);
+
+      if(c==NULL || c->err) {
+          printf("Update of UI Status via redis command failed");
+      }  
+
   }
 
 }
@@ -220,7 +243,12 @@ void ReverseArray(u1_t arr[], int size)
 
 // application entry point
 int main () {
+
     osjob_t initjob;
+
+
+    update_ui_status(lorawan_tx_uninitialized);
+
 
     if(!getenv("DEV_EUI") || !getenv("DEV_KEY")){
         fprintf(stderr, "environment variables not found.\n");
@@ -274,6 +302,8 @@ int main () {
     debug_init();
     // setup initial job
     os_setCallback(&initjob, initfunc);
+    // update ui indicators
+    update_ui_status(lorawan_tx_joining);
     // execute scheduled jobs and events
     os_runloop();
     // (not reached)
@@ -294,7 +324,9 @@ void onEvent (ev_t ev) {
       case EV_JOINED:
           debug_val("netid = ", LMIC.netid);
 
-	  ongoing_tx = 0;
+	        ongoing_tx = 0;
+
+          update_ui_status(lorawan_tx_joined);
 
           reportfunc(&reportjob);
 
