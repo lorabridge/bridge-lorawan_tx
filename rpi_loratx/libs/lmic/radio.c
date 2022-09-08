@@ -26,6 +26,7 @@
  */
 
 #include "lmic.h"
+#include <stdio.h>
 
 // ---------------------------------------- 
 // Registers Mapping

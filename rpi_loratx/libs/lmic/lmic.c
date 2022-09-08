@@ -27,6 +27,7 @@
 
 //! \file
 #include "lmic.h"
+#include <stdio.h>
 
 #if !defined(MINRX_SYMS)
 #define MINRX_SYMS 5
