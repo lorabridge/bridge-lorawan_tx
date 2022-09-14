@@ -187,11 +187,7 @@ static void reportfunc(osjob_t *j) {
 
     time_t rawtime;
     struct tm *timeinfo;
-    printf("in reportfunc2");
-    fflush(stdout);
     redisReply *queues = fetch_redis_queues();
-    printf("in reportfunc");
-    fflush(stdout);
     for (int i = 0; i < queues->elements; i++) {
         redisReply *msg = fetch_redis_message(queues->element[i]->str);
         if (msg->elements == 0) {
