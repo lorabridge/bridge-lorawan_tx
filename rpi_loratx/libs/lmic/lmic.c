@@ -539,6 +539,14 @@ void LMIC_setPingable (u1_t intvExp) {
 }
 
 
+// This function is a quick workaround to avoid unsupported initial join frequencies
+// at LoRaBridge gateway forwarder
+
+void LMIC_setLoRaBridgeJoinChannels(u1_t channelState) {
+    
+    LMIC.use_lb_gateway = channelState;
+}
+
 #if defined(CFG_eu868)
 // ================================================================================
 //
@@ -554,6 +562,8 @@ static const u4_t iniChannelFreq[12] = {
     EU868_F1|BAND_CENTI, EU868_F2|BAND_CENTI, EU868_F3|BAND_CENTI,
     EU868_F4|BAND_MILLI, EU868_F5|BAND_MILLI, EU868_F6|BAND_DECI
 };
+
+
 
 static void initDefaultChannels (bit_t join) {
     os_clearMem(&LMIC.channelFreq, sizeof(LMIC.channelFreq));
@@ -1792,6 +1802,15 @@ bit_t LMIC_startJoining (void) {
         LMIC.opmode &= ~(OP_SCAN|OP_REJOIN|OP_LINKDEAD|OP_NEXTCHNL);
         // Setup state
         LMIC.rejoinCnt = LMIC.txCnt = LMIC.pendTxConf = 0;
+
+        // Workaround for unsupported channels at LoRa Bridge Gateway
+
+        if(LMIC.use_lb_gw) {
+            LMIC.channelFreq[1] = EU868_F1|BAND_MILLI;
+            LMIC.channelFreq[3] = EU868_F2|BAND_MILLI;
+            LMIC.channelFreq[5] = EU868_F3|BAND_MILLI;
+        }
+
         initJoinLoop();
         LMIC.opmode |= OP_JOINING;
         // reportEvent will call engineUpdate which then starts sending JOIN REQUESTS

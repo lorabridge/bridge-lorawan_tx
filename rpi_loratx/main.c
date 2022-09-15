@@ -60,6 +60,7 @@ redisContext *c;
 redisReply *reply;
 
 uint8_t ongoing_tx;
+uint8_t join_number;
 
 //////////////////////////////////////////////////
 // INITIALIZE REDIS CLIENT
@@ -129,6 +130,7 @@ static void initfunc(osjob_t *j) {
     // start joining
     LMIC_startJoining();
     // init done - onEvent() callback will be invoked...
+    join_number = 1;
 }
 
 //////////////////////////////////////////////////
@@ -274,7 +276,7 @@ int main() {
 
     update_ui_status(lorawan_tx_uninitialized);
 
-    if (!getenv("DEV_EUI") || !getenv("DEV_KEY")) {
+    if (!getenv("DEV_EUI") || !getenv("DEV_KEY") || !getenv("USE_LB_GW")) {
         fprintf(stderr, "environment variables not found.\n");
         exit(1);
     }
@@ -316,6 +318,19 @@ int main() {
     //  printf("%d\n",alen);
     //  printf("%d\n",blen);
 
+
+    uint8_t use_lorabridge_gw = 1;
+
+    use_lorabridge_gw = atoi(getenv("USE_LB_GW"));
+
+    if(use_lorabridge_gw != 0 && use_lorabridge_gw != 1) {
+        fprintf(
+            stderr,
+            "Illegal USE_LB_GW value. Expected: 1/0, Got: %d. Aborting\n",
+            use_lorabridge_gw);
+        exit(1);
+    }
+
     ongoing_tx = 0;
     // printf(DEVEUI);
     // printf("%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",DEVEUI[0],DEVEUI[1],DEVEUI[2],DEVEUI[3],DEVEUI[4],DEVEUI[5],DEVEUI[6],DEVEUI[7]);
@@ -331,6 +346,8 @@ int main() {
     init_redis();
     // initialize debug library
     debug_init();
+    // Use lorabridge forwarder: yes = 1, no = 0
+    LMIC_setLoRaBridgeJoinChannels(use_lorabridge_gw);
     // setup initial job
     os_setCallback(&initjob, initfunc);
     // update ui indicators
@@ -350,6 +367,20 @@ void onEvent(ev_t ev) {
 
     switch (ev) {
 
+    case EV_JOINING:
+
+        printf("DEBUG: %d. joining attempt\n", join_number);
+
+        join_number += 1;
+
+        break;
+
+    case EV_JOIN_FAILED:
+
+        printf("DEBUG: Join failed!");
+
+        break;
+
         // network joined, session established
     case EV_JOINED:
         debug_val("netid = ", LMIC.netid);
@@ -357,6 +388,7 @@ void onEvent(ev_t ev) {
         printf("ev_joined");
         fflush(stdout);
         ongoing_tx = 0;
+        join_number = 1;
 
         update_ui_status(lorawan_tx_joined);
         // printf("test");

@@ -244,6 +244,9 @@ struct lmic_t {
     bcninfo_t   bcninfo;      // Last received beacon info
 
     u1_t        noRXIQinversion;
+
+    // Custom settings for LoRa Bridge
+    u1_t        use_lb_gateway;
 };
 //! \var struct lmic_t LMIC
 //! The state of LMIC MAC layer is encapsulated in this variable.
@@ -279,6 +282,8 @@ void  LMIC_tryRejoin     (void);
 
 void LMIC_setSession (u4_t netid, devaddr_t devaddr, xref2u1_t nwkKey, xref2u1_t artKey);
 void LMIC_setLinkCheckMode (bit_t enabled);
+
+void LMIC_setLoRaBridgeJoinChannels(u1_t channelState);
 
 
 
