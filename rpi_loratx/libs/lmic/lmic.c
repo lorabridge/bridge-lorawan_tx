@@ -1805,7 +1805,7 @@ bit_t LMIC_startJoining (void) {
 
         // Workaround for unsupported channels at LoRa Bridge Gateway
 
-        if(LMIC.use_lb_gw) {
+        if(LMIC.use_lb_gateway) {
             LMIC.channelFreq[1] = EU868_F1|BAND_MILLI;
             LMIC.channelFreq[3] = EU868_F2|BAND_MILLI;
             LMIC.channelFreq[5] = EU868_F3|BAND_MILLI;
