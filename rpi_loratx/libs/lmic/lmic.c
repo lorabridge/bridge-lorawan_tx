@@ -545,6 +545,7 @@ void LMIC_setPingable (u1_t intvExp) {
 void LMIC_setLoRaBridgeJoinChannels(u1_t channelState) {
     
     LMIC.use_lb_gateway = channelState;
+
 }
 
 #if defined(CFG_eu868)
@@ -569,6 +570,10 @@ static void initDefaultChannels (bit_t join) {
     os_clearMem(&LMIC.channelFreq, sizeof(LMIC.channelFreq));
     os_clearMem(&LMIC.channelDrMap, sizeof(LMIC.channelDrMap));
     os_clearMem(&LMIC.bands, sizeof(LMIC.bands));
+
+    #ifdef DEBUG_LMIC
+        printf("DEBUG: Initializing default channel frequencies\n");
+    #endif
 
     LMIC.channelMap = 0x3F;
     u1_t su = join ? 0 : 6;
@@ -1812,6 +1817,10 @@ bit_t LMIC_startJoining (void) {
             LMIC.channelFreq[1] = EU868_F1|BAND_MILLI;
             LMIC.channelFreq[3] = EU868_F2|BAND_MILLI;
             LMIC.channelFreq[5] = EU868_F3|BAND_MILLI;
+
+            #ifdef DEBUG_LMIC
+                printf("DEBUG: Forcing supported LoRaBridge channel frequencies\n");
+            #endif
         }
 
         // reportEvent will call engineUpdate which then starts sending JOIN REQUESTS

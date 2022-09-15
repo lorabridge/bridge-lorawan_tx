@@ -61,6 +61,7 @@ redisReply *reply;
 
 uint8_t ongoing_tx;
 uint8_t join_number;
+uint8_t use_lorabridge_gw;
 
 //////////////////////////////////////////////////
 // INITIALIZE REDIS CLIENT
@@ -127,6 +128,8 @@ void os_getDevKey(u1_t *buf) { memcpy(buf, DEVKEY, 16); }
 static void initfunc(osjob_t *j) {
     // reset MAC state
     LMIC_reset();
+    // Use lorabridge forwarder: yes = 1, no = 0
+    LMIC_setLoRaBridgeJoinChannels(use_lorabridge_gw);
     // start joining
     LMIC_startJoining();
     // init done - onEvent() callback will be invoked...
@@ -319,7 +322,7 @@ int main() {
     //  printf("%d\n",blen);
 
 
-    uint8_t use_lorabridge_gw = 1;
+    use_lorabridge_gw = 1;
 
     use_lorabridge_gw = atoi(getenv("USE_LB_GW"));
 
@@ -347,9 +350,7 @@ int main() {
     // initialize redis
     init_redis();
     // initialize debug library
-    debug_init();
-    // Use lorabridge forwarder: yes = 1, no = 0
-    LMIC_setLoRaBridgeJoinChannels(use_lorabridge_gw);
+    debug_init();    
     // setup initial job
     os_setCallback(&initjob, initfunc);
     // update ui indicators
