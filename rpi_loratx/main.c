@@ -323,6 +323,8 @@ int main() {
 
     use_lorabridge_gw = atoi(getenv("USE_LB_GW"));
 
+    printf("DEBUG: use lorabridge gw: %d\n", use_lorabridge_gw);
+
     if(use_lorabridge_gw != 0 && use_lorabridge_gw != 1) {
         fprintf(
             stderr,

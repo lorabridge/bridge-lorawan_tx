@@ -1803,6 +1803,9 @@ bit_t LMIC_startJoining (void) {
         // Setup state
         LMIC.rejoinCnt = LMIC.txCnt = LMIC.pendTxConf = 0;
 
+        initJoinLoop();
+        LMIC.opmode |= OP_JOINING;
+        
         // Workaround for unsupported channels at LoRa Bridge Gateway
 
         if(LMIC.use_lb_gateway) {
@@ -1811,8 +1814,6 @@ bit_t LMIC_startJoining (void) {
             LMIC.channelFreq[5] = EU868_F3|BAND_MILLI;
         }
 
-        initJoinLoop();
-        LMIC.opmode |= OP_JOINING;
         // reportEvent will call engineUpdate which then starts sending JOIN REQUESTS
         os_setCallback(&LMIC.osjob, FUNC_ADDR(startJoining));
         return 1;
