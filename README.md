@@ -10,7 +10,7 @@ proof-of-concept implementation is based on the Raspberry PI port of LMIC (Autho
 Features
 --------
 
-- Establishment of LoRaWAN connection
+- Establishment of LoRaWAN connection via Over-the-Air Activation procedure
 - Scheduling of LoRaWAN packets 
 - Removal of stale measurements
 - Signaling of LoRaWAN mac events (e.g. Link dead) towards user interface
