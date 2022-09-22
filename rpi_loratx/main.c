@@ -55,6 +55,9 @@ static u1_t DEVKEY[16];
 static const u1_t lorawan_tx_uninitialized[] = "uninitialized";
 static const u1_t lorawan_tx_joining[] = "joining";
 static const u1_t lorawan_tx_joined[] = "joined";
+static const u1_t lorawan_tx_joinfailed[] = "join failed";
+static const u1_t lorawan_tx_rejoinfailed[] = "rejoin failed";
+static const u1_t lorawan_tx_linkdead[] = "link dead";
 
 redisContext *c;
 redisReply *reply;
@@ -374,6 +377,8 @@ void onEvent(ev_t ev) {
 
         printf("DEBUG: %d. joining attempt\n", join_number);
 
+        fflush(stdout);
+
         join_number += 1;
 
         break;
@@ -381,6 +386,28 @@ void onEvent(ev_t ev) {
     case EV_JOIN_FAILED:
 
         printf("DEBUG: Join failed!");
+
+        fflush(stdout);
+
+        update_ui_status(lorawan_tx_joinfailed);
+
+        break;
+
+    case EV_REJOIN_FAILED:
+
+        fflush(stdout);
+
+        update_ui_status(lorawan_tx_rejoinfailed);
+
+        break;
+
+    case EV_LINK_DEAD:
+
+        printf("DEBUG: Link dead signal issued!");
+
+        fflush(stdout);
+
+        update_ui_status(lorawan_tx_linkdead);
 
         break;
 
