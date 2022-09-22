@@ -65,6 +65,7 @@ redisReply *reply;
 uint8_t ongoing_tx;
 uint8_t join_number;
 uint8_t use_lorabridge_gw;
+uint8_t lorawan_link_status; // Boolean: 0 - Link dead, 1 - Link alive
 
 //////////////////////////////////////////////////
 // INITIALIZE REDIS CLIENT
@@ -188,6 +189,17 @@ static osjob_t reportjob;
 
 // report sensor value every minute
 static void reportfunc(osjob_t *j) {
+
+    // Check if link is alive?
+
+    // If not, schedule another TX utility job
+
+    if(lorawan_link_status == 0) {
+
+        os_setTimedCallback(j, os_getTime() + sec2osticks(5), reportfunc);
+
+        return;
+    }
 
     // prepare and schedule data for transmission
 
@@ -340,6 +352,9 @@ int main() {
     }
 
     ongoing_tx = 0;
+
+    lorawan_link_status = 1;
+
     // printf(DEVEUI);
     // printf("%02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x",DEVEUI[0],DEVEUI[1],DEVEUI[2],DEVEUI[3],DEVEUI[4],DEVEUI[5],DEVEUI[6],DEVEUI[7]);
     // printf("\n");
@@ -385,7 +400,7 @@ void onEvent(ev_t ev) {
 
     case EV_JOIN_FAILED:
 
-        printf("DEBUG: Join failed!");
+        printf("DEBUG: Join failed!\n");
 
         fflush(stdout);
 
@@ -403,11 +418,25 @@ void onEvent(ev_t ev) {
 
     case EV_LINK_DEAD:
 
-        printf("DEBUG: Link dead signal issued!");
+        printf("DEBUG: Link dead signal issued!\n");
 
         fflush(stdout);
 
         update_ui_status(lorawan_tx_linkdead);
+
+        lorawan_link_status = 0;
+
+        break;
+
+    case EV_LINK_ALIVE:
+
+        printf("DEBUG: Link alive signal issued!\n");
+
+        fflush(stdout);
+
+        update_ui_status(lorawan_tx_joined);
+
+        lorawan_link_status = 1;
 
         break;
 
