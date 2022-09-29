@@ -192,16 +192,24 @@ static void reportfunc(osjob_t *j) {
 
     // Check if link is alive?
 
-    // If not, schedule another TX utility job
+    // If not, schedule a short heartbeat packet once per minute (not to congest LMIC at high SFs)
 
     if(lorawan_link_status == 0) {
 
-        os_setTimedCallback(j, os_getTime() + sec2osticks(5), reportfunc);
+        printf("Scheduling a lorabridge heartbeat packet...\n");
+
+        memset(LMIC.frame,0,sizeof(LMIC.frame));
+
+        LMIC.frame[0] = 'h';
+
+        LMIC_setTxData2(1, LMIC.frame, 1, 0); // (port 1, 2 bytes, unconfirmed)
+
+        os_setTimedCallback(j, os_getTime() + sec2osticks(60), reportfunc);
 
         return;
     }
 
-    // prepare and schedule data for transmission
+    // Otherwise, prepare and schedule data for transmission
 
     // printf("Fetching a redis string...\n");
 
@@ -447,6 +455,7 @@ void onEvent(ev_t ev) {
         printf("ev_joined");
         fflush(stdout);
         ongoing_tx = 0;
+        lorawan_link_status = 1;
         join_number = 1;
 
         update_ui_status(lorawan_tx_joined);
