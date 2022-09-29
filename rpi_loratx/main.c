@@ -420,7 +420,7 @@ void onEvent(ev_t ev) {
 
         fflush(stdout);
 
-        update_ui_status(lorawan_tx_rejoinfailed);
+        printf("DEBUG: Re-join failed!\n");
 
         break;
 
