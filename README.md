@@ -1,11 +1,11 @@
 
 LoRaBridge LoRaWAN Transmitter
 ==============================
+This repository is part of the LoRaBridge project.
 
 This repository includes the C implementation of a Class-A LoRaWAN transmitter, which is necessary
 to forward measurements collected at a LoRaBridge Bridge unit towards a LoRaBridge gateway. This
 proof-of-concept implementation is based on the Raspberry PI port of LMIC (Author Wolgang Klenk).
-
 
 Features
 --------
@@ -20,7 +20,6 @@ Supported Hardware
 
 - Adafruit LoRa Radio Bonnet with OLED display 
 
-
 Limitations/Disclaimer
 ----------------------
 
@@ -29,9 +28,13 @@ loss in LoRaWAN Class-A operation. While we have not experienced this with insta
 Raspberry PI 4B, other installations with different Raspberry PI hardware and/or OS might suffer from 
 the issue. 
 
-License
--------
+## License
 
-TODO
+All the LoRaBridge software components and the documentation are licensed under GNU General Public License 3.0.
+
+## Acknowledgements
+
+The financial support from Internetstiftung/Netidee is gratefully acknowledged. The mission of Netidee is to support development of open-source tools for more accessible and versatile use of the Internet in Austria.
+
 
 
