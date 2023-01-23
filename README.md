@@ -28,6 +28,12 @@ loss in LoRaWAN Class-A operation. While we have not experienced this with insta
 Raspberry PI 4B, other installations with different Raspberry PI hardware and/or OS might suffer from 
 the issue. 
 
+## Environment Variables
+- `DEV_EUI`: lorawan identifier for the bridge device
+- `DEV_KEY`: lorawan key to authenticate to the gateway
+- `REDIS-LIST`: Name of the redis list used by the Bridge Forwarder
+- `USE_LB_GW`: For future use. Will enable or disable the usage of the LoRaBridge gateway (default: 1, allowed: 0/1)
+
 ## License
 
 All the LoRaBridge software components and the documentation are licensed under GNU General Public License 3.0.
