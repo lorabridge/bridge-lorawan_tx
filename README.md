@@ -1,7 +1,7 @@
 
 LoRaBridge LoRaWAN Transmitter
 ==============================
-This repository is part of the LoRaBridge project.
+This repository is part of the [LoRaBridge](https://github.com/lorabridge/lorabridge) project.
 
 This repository includes the C implementation of a Class-A LoRaWAN transmitter, which is necessary
 to forward measurements collected at a LoRaBridge Bridge unit towards a LoRaBridge gateway. This
