@@ -1,4 +1,5 @@
-FROM alpine:3 as build
+ARG  IMG_VERSION=3.17
+FROM alpine:${IMG_VERSION} as build
 
 WORKDIR /home/lora
 # RUN echo "@community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
