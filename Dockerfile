@@ -25,7 +25,7 @@ WORKDIR /home/lora/rpi_loratx
 
 RUN make
 
-FROM alpine:3
+FROM alpine:${IMG_VERSION}
 
 # RUN echo "@community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
 RUN apk update
