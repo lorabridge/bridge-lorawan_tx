@@ -1,4 +1,7 @@
-
+> [!WARNING]
+> This project is **deprecated** and was superseded by [LoRaBridge2](https://github.com/lorabridge2). The replacement for **this** repository is [here](https://github.com/lorabridge2/bridge-lorawan-tx).
+>
+ 
 LoRaBridge LoRaWAN Transmitter
 ==============================
 This repository is part of the [LoRaBridge](https://github.com/lorabridge/lorabridge) project.
